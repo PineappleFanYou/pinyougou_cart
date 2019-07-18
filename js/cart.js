@@ -159,4 +159,68 @@ $(function () {
     // 最后把对应的商品的小计给算出来
     $(this).parents('.item').find('.computed').text(obj.price * obj.number);
   });
+
+
+  //实现删除
+  $('.item-list').on('click', '.item-del', function () {
+    let _this = this;
+    // 弹出一个jqueryUI的确认框
+    $("#dialog-confirm").dialog({
+      resizable: false,
+      height: 140,
+      modal: true,
+      buttons: {
+        "确认": function () {
+          $(this).dialog("close");
+          // 把对应的商品删除
+          // 把对应的结构移除
+          $(_this).parents('.item').remove();
+          // 把本地数据移除
+          // 我们现在需要根据id获取本地存储里面的数据
+          let id = parseInt($(_this).parents('.item').attr('data-id'));
+          // let obj = arr.find(e => {
+          //   return e.pID === id;
+          // });
+          // 在h5里面的，数组新增了一个方法，获取满足条件的元素的索引   
+          let index = arr.findIndex((e) => {
+            return e.pID === id;
+          });
+
+          // 把对应的id的数据从本地存储里面移除
+          // arr.splice(从哪里开始删除,总共删除多少个);
+          arr.splice(index, 1);
+          let jsonStr = JSON.stringify(arr);
+          localStorage.setItem('shopCartData', jsonStr);
+        },
+        "取消": function () {
+          $(this).dialog("close");
+        }
+      }
+    });
+  });
+
+
+
+
+
+
+
+
+
+
+  // 弹出一个jqueryUI的确认框
+  // $( "#dialog-confirm" ).dialog({
+  //   resizable: false,
+  //   height:140,
+  //   modal: true,
+  //   buttons: {
+  //     "确认": function() {
+  //       $( this ).dialog( "close" );
+  //       // 把对应的商品删除
+  //     },
+  //     "取消": function() {
+  //       $( this ).dialog( "close" );
+  //     }
+  //   }
+  // });
 });
