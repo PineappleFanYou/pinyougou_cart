@@ -103,5 +103,60 @@ $(function () {
     let status = cks.length === cked.length;
     $('.pick-all').prop('checked', status);
     totalCountAndMoney();
-  })
+  });
+
+
+  //使用事件委托来实现加减
+  //为什么我要用item-list？  是因为事件委托要找一个已经存在页面结构的前代元素， item是动态生成的，所以只能用item-list
+  $('.item-list').on('click', '.add', function () {
+    // 先得到旧数据
+    let oldVal = parseInt($(this).siblings('input').val());
+    oldVal++;
+    // 当数据大于1的时候，移除禁用手势
+    if (oldVal > 1) {
+      $(this).siblings('.reduce').removeClass('disabled');
+    }
+    // 把数据覆盖回去
+    $(this).siblings('input').val(oldVal);
+    // 把本地存储里面的数据，更新
+    // 判断依据是 点击的按钮对应的商品的id
+    let id = parseInt($(this).parents('.item').attr('data-id'));
+    // 遍历，寻找相同的id
+    let obj = arr.find((e) => {
+      return e.pID == id;
+    });
+    // 找到之后，更新对应的数据
+    obj.number = oldVal;
+    //把数据重新更新在本地存储
+    let jsonStr = JSON.stringify(arr);
+    localStorage.setItem('shopCartData', jsonStr);
+    //从新计算总价和总和
+    totalCountAndMoney();
+    // 最后把对应的商品的小计给算出来
+    $(this).parents('.item').find('.computed').text(obj.number * obj.price);
+  });
+
+  //减
+  $('.item-list').on('click', '.reduce', function () {
+    let oldVal = parseInt($(this).siblings('.input').val());
+    if (oldVal === 1) {
+      return;
+    }
+    oldVal--;
+    if (oldVal === 1) {
+      $(this).addClass('disabled');
+    }
+    // 把数据覆盖回去
+    $(this).siblings('input').val(oldVal);
+    let id = parseInt($(this).parents('.item').attr('data-id'));
+    let obj = arr.find(e => {
+      return e.pID === id;
+    });
+    obj.number = oldVal;
+    let jsonStr = JSON.stringify(arr);
+    localStorage.setItem('shopCartData', jsonStr);
+    totalCountAndMoney();
+    // 最后把对应的商品的小计给算出来
+    $(this).parents('.item').find('.computed').text(obj.price * obj.number);
+  });
 });
