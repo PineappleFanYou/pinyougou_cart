@@ -37,5 +37,58 @@ $(function () {
             $('.reduce').addClass('disabled');
         }
         $('.choose-number').val(num);
+    });
+
+
+    //点击加入购物车，就把这些数据存储
+    $('.addshopcar').on('click', function () {
+        //我们现在要存储的有图片，名字，价格，id, 数量
+        // 唯独数量是不固定和没有的，所以要先获取
+        let number = parseInt($('.choose-number').val());
+        //先读取数据，然后判断有没有数据
+        let jsonStr = localStorage.getItem('shopCartData');
+        let arr;
+        if (jsonStr == null) {
+            //如果没有，那么就给一个空数组
+            arr = [];
+        } else {
+            //将字符串转换为对象   JSON.parse(必须放一个满足json格式的字符串)   返回值： 就是js里面的对象(也可能是数组)
+            //如果有数据，那就把转换格式后装起来
+            arr = JSON.parse(jsonStr);
+        }
+        // 把这些数据存储在本地存储
+        /* 
+            有两种情况：
+            第一：用户一种商品只买一件
+            第二：用户一种商品买了好几件
+            如果是同一种商品，那么id是肯定相同的，所以遍历寻找
+        */
+        let isExit = arr.find(e => {
+            return e.pID === id;
+        });
+        // 判断，如果相同，就加起来
+        if (isExit !== undefined) {
+            // 现在的有几个id加上原来的id
+            isExit.number += number;
+        } else {
+            //我们现在要存储的有图片，名字，价格，pID, 数量
+            let good = {
+                pID: obj.pID,
+                name: obj.name,
+                imgSrc: obj.imgSrc,
+                price: obj.price,
+                number: number
+            }
+            arr.push(good);
+            //开发中，我们会把对象转换成json格式,然后存储到本地数组
+            jsonStr = JSON.stringify(arr);
+            // localStorage.setItem(键，jsonStr);
+            localStorage.setItem('shopCartData', jsonStr);
+        }
     })
+
+    // 点击加入购物车，跳转到购物页面  location.href
+    $('.addshopcar').on('click', function () {
+        location.href = './cart.html';
+    });
 });
