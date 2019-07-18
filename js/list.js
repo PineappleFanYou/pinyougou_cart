@@ -5,7 +5,7 @@ $(function () {
     //遍历
     phoneData.forEach(e => {
         html += `<li class="goods-list-item">
-        <a href="detail.html">
+        <a href="detail.html?id=${e.pID}">
           <div class="item-img">
             <img src="${e.imgSrc}" alt="">
           </div>
