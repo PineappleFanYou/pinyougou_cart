@@ -81,4 +81,27 @@ $(function () {
     $('.total-money').text(totalMoney);
   }
   totalCountAndMoney();
+
+  //做全选和单选，然后计算总价
+  //当我点击全选时，全部小框选中
+  $('.pick-all').on('click', function () {
+    // 看看自己当前的状态
+    let status = $(this).prop('checked');
+    //设置每个商品和自己一样
+    $('.item-ck').prop('checked', status);
+    $('.pick-all').prop('checked', status);
+    //再次计算总价
+    totalCountAndMoney();
+  });
+  //其实这里更加建议使用委托来实现，因为所有的商品的信息都是动态生成的，如果是以后从服务器获取数据，会失败的，必须是用委托的
+  $('.item-list').on('click', '.item-ck', function () {
+    //我们这里可以判断，如果我们点击的数量（长度）和总的小框数量是一样的，那就说明我们把全部的小框都勾选了，反之，没有全部勾选
+    // 获取小框的元素
+    let cks = $('.item-ck');
+    //获取每个小框的元素
+    let cked = $('.item-ck:checked');
+    let status = cks.length === cked.length;
+    $('.pick-all').prop('checked', status);
+    totalCountAndMoney();
+  })
 });
